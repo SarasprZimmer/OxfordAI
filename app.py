@@ -67,4 +67,31 @@ app = Flask(__name__)  # 👈 THIS must exist
 
 @app.route("/")
 def home():
+    @app.route("/webhook", methods=["POST"])
+def whatsapp_webhook():
+    data = request.get_json()
+    print("✅ Webhook hit!")
+    print("📩 Incoming:", data)
+
+    incoming_msg = data.get("message", {}).get("body", "")
+    sender = data.get("message", {}).get("from", "")
+
+    if not incoming_msg or not sender:
+        return "No valid message", 200
+
+    # Example response text (you can plug in GPT logic later)
+    reply = "سلام! لطفاً مقصد مورد نظر خود را وارد کنید."
+
+    # Send reply using UltraMsg
+    requests.post(
+        f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
+        data={
+            "token": os.getenv("ULTRA_TOKEN"),
+            "to": sender,
+            "body": reply
+        }
+    )
+
+    return "OK", 200
+
     return "OxfordAI is running!"
