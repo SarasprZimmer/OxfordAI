@@ -22,13 +22,14 @@ def home():
 
 
 @app.route("/webhook", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def whatsapp_webhook():
     data = request.get_json()
     print("✅ Webhook hit!")
     print("📩 Incoming:", data)
 
-    incoming_msg = data.get("message", {}).get("body", "")
-    sender = data.get("message", {}).get("from", "")
+    incoming_msg = data.get("data", {}).get("body", "")
+    sender = data.get("data", {}).get("from", "")
 
     if not incoming_msg or not sender:
         return "No valid message", 200
@@ -45,6 +46,7 @@ def whatsapp_webhook():
     )
 
     return "OK", 200
+
 
 # ✅ Your scraper functions can remain below this point
 # (they won’t interfere unless you call them)
