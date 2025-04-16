@@ -51,22 +51,49 @@ def whatsapp_webhook():
 
 def get_gpt_response(prompt):
     try:
-        response = openai.ChatCompletion.create(
+        # 🧠 Step 1: Use GPT to detect request type
+        detection = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "فقط مشخص کن که این پیام درباره کدام یک از موارد زیر است: tour, hotel یا flight"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        req_type = detection.choices[0].message["content"].strip().lower()
+        print("🔍 Detected Type:", req_type)
+
+        # 🧹 Step 2: Scrape data based on type
+        driver = get_admin_driver()
+        login_admin(driver)
+
+        if "flight" in req_type:
+            data_list = scrape_flights_selenium(driver)
+        elif "hotel" in req_type:
+            data_list = scrape_hotels_selenium(driver)
+        else:
+            data_list = scrape_tours_selenium(driver)
+
+        driver.quit()
+
+        scraped_info = "\n".join(data_list) or "هیچ داده‌ای یافت نشد."
+
+        # 💬 Step 3: Ask GPT to respond with scraped info
+        final_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {
                     "role": "system",
                     "content": (
-                        "شما یک دستیار حرفه‌ای گردشگری هستید که به زبان فارسی صحبت می‌کند. "
-                        "شغل شما این است که به سوالات مربوط به تورها، هتل‌ها و پروازها پاسخ دهید. "
-                        "اگر مقصد یا تاریخ مشخصی گفته شد، به صورت مودبانه و مفید پاسخ دهید."
+                        "شما یک دستیار گردشگری هستید که به زبان فارسی به سوالات مربوط به تورها، پروازها و هتل‌ها پاسخ می‌دهد."
                     )
                 },
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7
+                {"role": "user", "content": f"{prompt}\n\nاطلاعات موجود:\n{scraped_info}"}
+            ]
         )
-        return response.choices[0].message["content"].strip()
+
+        return final_response.choices[0].message["content"].strip()
+
     except Exception as e:
         print("❌ GPT error:", e)
         return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
+
