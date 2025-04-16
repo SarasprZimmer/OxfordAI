@@ -46,9 +46,14 @@ def whatsapp_webhook():
 
     return "OK", 200
 
+from openai import OpenAI
+
 def get_gpt_response(prompt):
     try:
-        client = OpenAI()  # ✅ uses env key automatically
+        client = OpenAI(
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url="https://api.openai.com/v1"  # 👈 force default, no proxy
+        )
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
