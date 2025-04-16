@@ -47,8 +47,6 @@ def whatsapp_webhook():
 
     return "OK", 200
 
-from openai import OpenAI
-
 def get_gpt_response(prompt):
     try:
         response = openai.ChatCompletion.create(
