@@ -16,7 +16,7 @@ PASSWORD = os.getenv("OXFORD_PASS")
 
 def get_admin_driver():
     options = webdriver.ChromeOptions()
-    # Disable headless mode temporarily if you want to see the browser
+    options.binary_location = "/usr/bin/chromium-browser"  # 👈 This line is critical on Render!
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
