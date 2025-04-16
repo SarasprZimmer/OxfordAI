@@ -36,8 +36,7 @@ def whatsapp_webhook():
 
     reply = get_gpt_response(incoming_msg)
 
-    # 🧪 Debugging the UltraMsg request
-    print("✉️ Sending reply:", reply)
+    # ✉️ Send reply via UltraMsg
     response = requests.post(
         f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
         data={
@@ -47,9 +46,6 @@ def whatsapp_webhook():
         }
     )
     print("📬 UltraMsg Response:", response.status_code, response.text)
-
-    return "OK", 200
-
 
     return "OK", 200
 
@@ -74,5 +70,3 @@ def get_gpt_response(prompt):
     except Exception as e:
         print("❌ GPT error:", e)
         return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
-
-
