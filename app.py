@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
+from flask import Flask, request
+
 
 load_dotenv()
 
