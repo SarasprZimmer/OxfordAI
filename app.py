@@ -7,9 +7,10 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 from flask import Flask, request
+import openai
 
 load_dotenv()
-
+openai.api_key = os.getenv("OPENAI_API_KEY")
 LOGIN_URL = "http://1to100.ir/admin/login"
 USERNAME = os.getenv("OXFORD_USER")
 PASSWORD = os.getenv("OXFORD_PASS")
@@ -22,7 +23,6 @@ def home():
 
 
 @app.route("/webhook", methods=["POST"])
-@app.route("/webhook", methods=["POST"])
 def whatsapp_webhook():
     data = request.get_json()
     print("✅ Webhook hit!")
@@ -34,7 +34,7 @@ def whatsapp_webhook():
     if not incoming_msg or not sender:
         return "No valid message", 200
 
-    reply = "سلام! لطفاً مقصد مورد نظر خود را وارد کنید."
+    reply = get_gpt_response(incoming_msg)
 
     requests.post(
         f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
@@ -47,6 +47,18 @@ def whatsapp_webhook():
 
     return "OK", 200
 
+def get_gpt_response(prompt):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "شما یک دستیار سفر حرفه‌ای هستید که به فارسی پاسخ می‌دهد."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        return response.choices[0].message["content"].strip()
+    except Exception as e:
+        print("❌ GPT error:", e)
+        return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
 
-# ✅ Your scraper functions can remain below this point
-# (they won’t interfere unless you call them)
