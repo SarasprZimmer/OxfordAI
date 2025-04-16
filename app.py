@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 from flask import Flask, request
+from scraper import get_admin_driver, login_admin, scrape_flights_selenium, scrape_hotels_selenium, scrape_tours_selenium
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY") 
