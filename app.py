@@ -1,16 +1,16 @@
 import os
 import time
 import requests
+from openai import OpenAI  # ✅ this is the correct import
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 from flask import Flask, request
-from openai import OpenAI
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
 LOGIN_URL = "http://1to100.ir/admin/login"
 USERNAME = os.getenv("OXFORD_USER")
 PASSWORD = os.getenv("OXFORD_PASS")
@@ -20,7 +20,6 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return "OxfordAI is running!"
-
 
 @app.route("/webhook", methods=["POST"])
 def whatsapp_webhook():
@@ -49,7 +48,7 @@ def whatsapp_webhook():
 
 def get_gpt_response(prompt):
     try:
-        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -62,5 +61,3 @@ def get_gpt_response(prompt):
     except Exception as e:
         print("❌ GPT error:", e)
         return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
-
-
