@@ -59,3 +59,10 @@ def scrape_tours_selenium(driver):
         if len(cols) >= 3:
             tours.append(f"🧳 {cols[0].text.strip()} | {cols[1].text.strip()} | {cols[2].text.strip()}")
     return tours
+    from flask import Flask
+
+app = Flask(__name__)  # 👈 THIS must exist
+
+@app.route("/")
+def home():
+    return "OxfordAI is running!"
