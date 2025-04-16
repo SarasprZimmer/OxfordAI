@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 from flask import Flask, request
-import openai
+from openai import OpenAI
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -49,7 +49,8 @@ def whatsapp_webhook():
 
 def get_gpt_response(prompt):
     try:
-        response = openai.ChatCompletion.create(
+        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "شما یک دستیار سفر حرفه‌ای هستید که به فارسی پاسخ می‌دهد."},
@@ -57,8 +58,9 @@ def get_gpt_response(prompt):
             ],
             temperature=0.7
         )
-        return response.choices[0].message["content"].strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         print("❌ GPT error:", e)
         return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
+
 
