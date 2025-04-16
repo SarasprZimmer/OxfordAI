@@ -36,7 +36,9 @@ def whatsapp_webhook():
 
     reply = get_gpt_response(incoming_msg)
 
-    requests.post(
+    # 🧪 Debugging the UltraMsg request
+    print("✉️ Sending reply:", reply)
+    response = requests.post(
         f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
         data={
             "token": os.getenv("ULTRA_TOKEN"),
@@ -44,6 +46,10 @@ def whatsapp_webhook():
             "body": reply
         }
     )
+    print("📬 UltraMsg Response:", response.status_code, response.text)
+
+    return "OK", 200
+
 
     return "OK", 200
 
