@@ -48,7 +48,7 @@ def whatsapp_webhook():
 
 def get_gpt_response(prompt):
     try:
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        client = OpenAI()  # ✅ uses env key automatically
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -61,3 +61,4 @@ def get_gpt_response(prompt):
     except Exception as e:
         print("❌ GPT error:", e)
         return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
+
