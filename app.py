@@ -1,7 +1,7 @@
 import os
 import time
 import requests
-from openai import OpenAI  # ✅ this is the correct import
+import openai
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from flask import Flask, request
 
 load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY") 
 
 LOGIN_URL = "http://1to100.ir/admin/login"
 USERNAME = os.getenv("OXFORD_USER")
@@ -50,20 +51,24 @@ from openai import OpenAI
 
 def get_gpt_response(prompt):
     try:
-        client = OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            base_url="https://api.openai.com/v1"  # 👈 force default, no proxy
-        )
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "شما یک دستیار سفر حرفه‌ای هستید که به فارسی پاسخ می‌دهد."},
+                {
+                    "role": "system",
+                    "content": (
+                        "شما یک دستیار حرفه‌ای گردشگری هستید که به زبان فارسی صحبت می‌کند. "
+                        "شغل شما این است که به سوالات مربوط به تورها، هتل‌ها و پروازها پاسخ دهید. "
+                        "اگر مقصد یا تاریخ مشخصی گفته شد، به صورت مودبانه و مفید پاسخ دهید."
+                    )
+                },
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7
         )
-        return response.choices[0].message.content.strip()
+        return response.choices[0].message["content"].strip()
     except Exception as e:
         print("❌ GPT error:", e)
         return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
+
 
