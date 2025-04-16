@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "turing-archway-455909-j9",
+  "private_key_id": "dbb522ef75b35e0177986e6cbce5fbb5b0496ff8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDNHkvQal/rG/CG\nRQXYVvhs4zLmpGY2YxY5N0nU3PkJoiVbIyJ86kMI6IxPuj1wxPWUx97xzw5ZRrXE\n4WAI4Hl7ot0XwkMpMFHmUXyzAUlZ7kon/NYGNgIl91eWCPavHEW7HxsMEV9IjSjj\nn+gUe0FIB2woCNGGHx8N+dxeYkMmsZbcNWL0eghbnLWT3AAYAjV3qGjF1susTqgw\ndaN/YzOe7Z+89NSdBDmO4Ziwi/Y0ukmVuQDdg24UzhBftiVrB5fwlS4/TxnqBKBw\nDjdVhoEzUlfzSyfYZTJC3RnBMmRchhA9iremUtSscpzxzlVo4OYUOYuv1ERT+Moe\nDbbFSXKjAgMBAAECggEAIPdejfeaxOmvpZTQVK3drXpygtknSFRyjO2S4zBEokS6\nJkSmVVc9QOBHNMUk/MvbAHeDIG/7yWNw8Vybl7GkNLe/OwNQ0fzfHNo55Xcud9Kx\nfm3HZCYoADwZipaUNx6fImzkZvMf0kRFrxfTL/+DRXVT77dDHYBA+HkQ7uZyDnSw\nfXMi3kRLPsNKVUuJs0b8n0jpmZGJUPjxEzLg6BF79sfSL9AQNuywAOQ5DvPUZyr1\nSFdcqFwbwcQG8zR24GIk/9pNvxR4iGLz4WA43btCIL+iCckZ0IDyFGTYFL7bRM4m\nGJKHdvI7dlrkyPCK/EK35bpmztus7wvEIv0POVY4CQKBgQD3uUj5JNs1l4n/smHJ\nwy13yzFNNKGDRHyNtesMsDQRE01ByStbf6ah0mvFyye69llfFmfr95mAulNrWVS5\nXhq7GHAE+Jd1MaJHcZ6AyhRwCXRmSCQNUVfxW+pXkOYgTN5ZI9xxFL6VL0+Z63N6\nBTHNxMIM4MPgCdYLSnVH0pdFjwKBgQDT+J5KbI0RixDcaeC0Z1WbLc0ZnHU05qK7\nkODeJP559mbQiG16ysG6skVpC6AVveVXNFJMANlTBcI0RTjbE9PFY/ZDXrmY4yw3\nAhRe4ReC+04jmrH3IBp8PuJRLrIBInTrzKT3UwCQQ067eepHsgAfX0gjE7yq5rBQ\nqO+oRdr/rQKBgQCO0PRgJr52VCpMDvRPlMWm1a9Tum8PNbG1JVcglok9+unEbo0f\nkCVqD9zwSGJcaGA38LvzD2khDMrBDdxJjhZNHRaf1w3Ck93h4IAn8dj8iobf3OFk\nCCxySrJ8z13M62QY8hLJ4tLJQWBb9aE6jLoczj2tnPtwM1uCYOfig2eQwwKBgA1v\ngskA3GgyQl1WMLH+osR1QLzQ1/UEcWgmJLqv6ZldbuLk4tuXonPs/M1NuVXndXPz\nkwvSOfQzNz4M7S+lsBSg42kdxfHU5GaQMS5aYh0hRLCpC4K4fDVH3xx6MzozLuoL\nTKGIl06NlZ34eksVE0Dpzy65/4ltmdti+d3Wn6z5AoGBAI9iYLn+Aeg6P6s07EDc\n+SF4HySQyB1Dph9xo53+mGsbfA+4MxsNrb/cxKHwXD6HTsVCgXc7t8fm3XDty7WF\nAPv+yB6ecVJKiMZHvUEhVYJ/6/VLAMlo3+Dqmh/3fBSZ2jZAtCb0vyf5gLrWUt9O\niFgBwEXHbmxLwLSnhh0DnDXp\n-----END PRIVATE KEY-----\n",
+  "client_email": "saynawhatsappir@turing-archway-455909-j9.iam.gserviceaccount.com",
+  "client_id": "111304320995043885653",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/saynawhatsappir%40turing-archway-455909-j9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
