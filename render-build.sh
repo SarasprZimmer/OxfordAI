@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Download Chromium binary for headless Selenium
 
-# Install Chromium (for Selenium)
-apt-get update && apt-get install -y chromium-browser
+echo "🔧 Downloading Chromium..."
+mkdir -p /tmp/chromium
+curl -Lo /tmp/chromium/chrome.zip https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/605673/chrome-linux.zip
+unzip /tmp/chromium/chrome.zip -d /opt/render/project/src/chrome-linux
+
