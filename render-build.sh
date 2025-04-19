@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-echo "🔧 Downloading Chromium..."
+# Install dependencies
+pip install -r requirements.txt
 
-mkdir -p /opt/render/project/src/chrome-linux
-curl -Lo /tmp/chrome.zip https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/605673/chrome-linux.zip
-unzip /tmp/chrome.zip -d /opt/render/project/src/chrome-linux
-
+# Download and extract Chromium
+wget https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1210785/chrome-linux.zip -O /tmp/chromium.zip
+unzip /tmp/chromium.zip -d /tmp/
+mv /tmp/chrome-linux /opt/render/project/src/chrome-linux
