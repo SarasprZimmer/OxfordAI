@@ -16,10 +16,13 @@ PASSWORD = os.getenv("OXFORD_PASS")
 
 def get_admin_driver():
     options = webdriver.ChromeOptions()
-    options.binary_location = "/opt/render/project/src/chrome-linux/chrome"
+    options.binary_location = "/opt/render/project/src/.chromium/chrome-linux/chrome"
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+
     return webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 
 def login_admin(driver):
