@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Install Chromium
-CHROME_VERSION="121.0.6167.85"  # Pick a stable version
-mkdir -p .chromium
-cd .chromium
-curl -LO "https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1210655/chrome-linux.zip"
-unzip chrome-linux.zip
-cd ..
+
+echo "🔧 Installing Chromium manually..."
+
+# Download and unzip Chromium
+curl -sSL https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1136583/chrome-linux.zip -o chrome-linux.zip
+unzip -q chrome-linux.zip
+
+# Ensure the binary is in the expected location
+chmod +x chrome-linux/chrome
+echo "✅ Chromium installed!"
