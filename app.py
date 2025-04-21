@@ -1,18 +1,16 @@
 import os
 import requests
 import openai
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
-import asyncio
 
 from scraper import (
     scrape_flights_playwright,
     scrape_hotels_playwright,
     scrape_tours_playwright
 )
-
-asyncio.get_event_loop().set_debug(False)
 
 # ─────────────────────────────────────────────
 # Shared memory for user follow-up context
@@ -43,10 +41,9 @@ def resolve_context(user_id, new_input):
     return new_input
 
 # ─────────────────────────────────────────────
-# GPT config
+# GPT + FastAPI Config
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 app = FastAPI()
 
 @app.get("/")
@@ -73,21 +70,26 @@ async def whatsapp_webhook(request: Request):
         full_prompt = resolve_context(sender, incoming_msg)
         reply = await get_gpt_response(full_prompt)
 
-    response = requests.post(
-        f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
-        data={
-            "token": os.getenv("ULTRA_TOKEN"),
-            "to": sender,
-            "body": reply
-        }
-    )
-    print("📬 UltraMsg Response:", response.status_code, response.text)
+    # Send reply back to WhatsApp via UltraMsg
+    try:
+        response = requests.post(
+            f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
+            data={
+                "token": os.getenv("ULTRA_TOKEN"),
+                "to": sender,
+                "body": reply
+            }
+        )
+        print("📬 UltraMsg Response:", response.status_code, response.text)
+    except Exception as e:
+        print("🚨 UltraMsg Error:", e)
 
     return PlainTextResponse("OK", status_code=200)
 
 # ─────────────────────────────────────────────
 async def get_gpt_response(prompt):
     try:
+        # Step 1: Classify the type
         type_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -98,15 +100,18 @@ async def get_gpt_response(prompt):
         request_type = type_response.choices[0].message["content"].strip().lower()
         print("🔍 Detected Type:", request_type)
 
+        # Step 2: Scrape matching data in a separate thread
+        loop = asyncio.get_event_loop()
         if "flight" in request_type:
-            data = scrape_flights_playwright()
+            data = await loop.run_in_executor(None, scrape_flights_playwright)
         elif "hotel" in request_type:
-            data = scrape_hotels_playwright()
+            data = await loop.run_in_executor(None, scrape_hotels_playwright)
         else:
-            data = scrape_tours_playwright()
+            data = await loop.run_in_executor(None, scrape_tours_playwright)
 
         formatted_data = "\n".join(data) or "هیچ اطلاعاتی در حال حاضر موجود نیست."
 
+        # Step 3: Generate GPT reply
         reply_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
