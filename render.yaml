@@ -2,7 +2,7 @@ services:
   - type: web
     name: OxfordAI
     env: docker
-    plan: pro  # or 'pro' if you’re using the Pro plan
+    plan: starter  # or 'pro' if you’re using the Pro plan
     repo: https://github.com/SarasprZimmer/OxfordAI
     branch: main
     autoDeploy: true
