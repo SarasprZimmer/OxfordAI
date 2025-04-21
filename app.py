@@ -20,31 +20,27 @@ def whatsapp_webhook():
     print("✅ Webhook hit!")
     print("📩 Incoming:", data)
 
-    try:
-        incoming_msg = data.get("data", {}).get("body", "")
-        sender = data.get("data", {}).get("from", "")
+    incoming_msg = data.get("data", {}).get("body", "")
+    sender = data.get("data", {}).get("from", "")
 
-        if not incoming_msg or not sender:
-            print("⚠️ Invalid message format")
-            return "No valid message", 200
+    if not incoming_msg or not sender:
+        print("⚠️ Missing message or sender")
+        return "No valid message", 200
 
-        reply = get_gpt_response(incoming_msg)
+    reply = get_gpt_response(incoming_msg)
 
-        # ✅ Send reply back via UltraMsg
-        response = requests.post(
-            f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
-            data={
-                "token": os.getenv("ULTRA_TOKEN"),
-                "to": sender,
-                "body": reply
-            }
-        )
-        print("📬 UltraMsg Response:", response.status_code, response.text)
-        return "OK", 200
+    response = requests.post(
+        f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
+        data={
+            "token": os.getenv("ULTRA_TOKEN"),
+            "to": sender,
+            "body": reply
+        }
+    )
+    print("📬 UltraMsg Response:", response.status_code, response.text)
 
-    except Exception as e:
-        print("❌ Webhook error:", e)
-        return jsonify({"error": str(e)}), 500
+    return "OK", 200
+
 
 def get_gpt_response(prompt):
     try:
