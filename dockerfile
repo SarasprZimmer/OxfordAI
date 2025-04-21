@@ -1,11 +1,11 @@
-# Base image with Python
+# Use a slim Python base image
 FROM python:3.11-slim
 
-# Set environment
+# Set environment variables to prevent .pyc files and enable unbuffered logs
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies
+# Install system dependencies and Playwright deps
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
@@ -27,12 +27,15 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright dependencies & browser
-RUN playwright install --with-deps chromium
+# Install Playwright + Chromium
+RUN pip install playwright && playwright install --with-deps chromium
 
-# Copy app
+# Add app code
 COPY . /app
 WORKDIR /app
 
-# Start the app
+# Expose Render’s port
+EXPOSE 10000
+
+# Run FastAPI with uvicorn
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "10000"]
