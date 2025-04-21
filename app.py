@@ -3,7 +3,11 @@ import requests
 import openai
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-from scraper import get_admin_driver, login_admin, scrape_flights_selenium, scrape_hotels_selenium, scrape_tours_selenium
+from scraper import (
+    scrape_flights_playwright,
+    scrape_hotels_playwright,
+    scrape_tours_playwright
+)
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
