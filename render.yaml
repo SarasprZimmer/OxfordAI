@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: OxfordAI
+    env: docker
+    plan: pro  # or 'pro' if you’re using the Pro plan
+    repo: https://github.com/SarasprZimmer/OxfordAI
+    branch: main
+    autoDeploy: true
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OXFORD_USER
+        sync: false
+      - key: OXFORD_PASS
+        sync: false
+      - key: ULTRA_INSTANCE_ID
+        sync: false
+      - key: ULTRA_TOKEN
+        sync: false
