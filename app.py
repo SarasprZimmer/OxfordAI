@@ -4,12 +4,46 @@ import openai
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
+import asyncio
+
 from scraper import (
     scrape_flights_playwright,
     scrape_hotels_playwright,
     scrape_tours_playwright
 )
 
+asyncio.get_event_loop().set_debug(False)
+
+# ─────────────────────────────────────────────
+# Shared memory for user follow-up context
+user_context = {}
+
+def detect_flight_context(user_id, user_input):
+    if "پرواز" in user_input and not has_date(user_input):
+        user_context[user_id] = {"intent": "flight", "missing": "date", "original_msg": user_input}
+        return "لطفاً تاریخ مورد نظر خود برای پرواز را مشخص کنید."
+    return None
+
+def has_date(text):
+    persian_months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+                      "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
+    english_months = ["january", "february", "march", "april", "may", "june",
+                      "july", "august", "september", "october", "november", "december",
+                      "jan", "feb", "mar", "apr", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+    lower_text = text.lower()
+    return any(month in lower_text for month in english_months) or any(month in text for month in persian_months)
+
+def resolve_context(user_id, new_input):
+    context = user_context.get(user_id)
+    if context and context.get("missing") == "date":
+        full_prompt = f"{context['original_msg']}، در تاریخ {new_input}"
+        del user_context[user_id]
+        return full_prompt
+    return new_input
+
+# ─────────────────────────────────────────────
+# GPT config
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -32,7 +66,12 @@ async def whatsapp_webhook(request: Request):
         print("⚠️ Missing message or sender")
         return PlainTextResponse("No valid message", status_code=200)
 
-    reply = await get_gpt_response(incoming_msg)
+    followup = detect_flight_context(sender, incoming_msg)
+    if followup:
+        reply = followup
+    else:
+        full_prompt = resolve_context(sender, incoming_msg)
+        reply = await get_gpt_response(full_prompt)
 
     response = requests.post(
         f"https://api.ultramsg.com/{os.getenv('ULTRA_INSTANCE_ID')}/messages/chat",
@@ -46,10 +85,9 @@ async def whatsapp_webhook(request: Request):
 
     return PlainTextResponse("OK", status_code=200)
 
-
+# ─────────────────────────────────────────────
 async def get_gpt_response(prompt):
     try:
-        # Step 1: Detect type
         type_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -60,7 +98,6 @@ async def get_gpt_response(prompt):
         request_type = type_response.choices[0].message["content"].strip().lower()
         print("🔍 Detected Type:", request_type)
 
-        # Step 2: Scrape with Playwright
         if "flight" in request_type:
             data = scrape_flights_playwright()
         elif "hotel" in request_type:
@@ -70,7 +107,6 @@ async def get_gpt_response(prompt):
 
         formatted_data = "\n".join(data) or "هیچ اطلاعاتی در حال حاضر موجود نیست."
 
-        # Step 3: Generate GPT reply
         reply_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
