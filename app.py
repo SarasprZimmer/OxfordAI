@@ -48,36 +48,42 @@ def whatsapp_webhook():
 
 def get_gpt_response(prompt):
     try:
-        # Step 1: Detect type (flight, tour, hotel)
+        # Step 1: Detect request type (flight, hotel, tour)
         type_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "نوع درخواست را فقط با یکی از این گزینه‌ها مشخص کن: tour، flight یا hotel."},
+                {
+                    "role": "system",
+                    "content": "فقط نوع درخواست را با یکی از این سه گزینه پاسخ بده: tour، flight، hotel."
+                },
                 {"role": "user", "content": prompt}
             ]
         )
         request_type = type_response.choices[0].message["content"].strip().lower()
         print("🔍 Detected Type:", request_type)
 
-        # Step 2: Scrape data
-        driver = get_admin_driver()
-        login_admin(driver)
-
+        # Step 2: Scrape data based on type using Playwright
         if "flight" in request_type:
-            data = scrape_flights_selenium(driver)
+            data = scrape_flights_playwright()
         elif "hotel" in request_type:
-            data = scrape_hotels_selenium(driver)
+            data = scrape_hotels_playwright()
+        elif "tour" in request_type:
+            data = scrape_tours_playwright()
         else:
-            data = scrape_tours_selenium(driver)
+            data = ["درخواست شما قابل شناسایی نبود. لطفاً دوباره تلاش کنید."]
 
-        driver.quit()
         formatted_data = "\n".join(data) or "هیچ اطلاعاتی در حال حاضر موجود نیست."
 
-        # Step 3: Generate reply based on scraped data
+        # Step 3: Generate GPT response with context
         reply_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "شما یک دستیار حرفه‌ای گردشگری هستید که به زبان فارسی به سوالات تور، هتل و پرواز پاسخ می‌دهد."},
+                {
+                    "role": "system",
+                    "content": (
+                        "شما یک دستیار حرفه‌ای گردشگری هستید که به زبان فارسی به سوالات مربوط به تور، هتل و پرواز پاسخ می‌دهد."
+                    )
+                },
                 {"role": "user", "content": f"{prompt}\n\nاطلاعات موجود:\n{formatted_data}"}
             ],
             temperature=0.7
@@ -86,5 +92,4 @@ def get_gpt_response(prompt):
 
     except Exception as e:
         print("❌ GPT error:", e)
-        return "متأسفم، مشکلی پیش آمده. لطفاً دوباره امتحان کنید."
-
+        return "ببخشید پرنسس، هنوز کدت کار نمیکنه"
