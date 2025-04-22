@@ -8,7 +8,11 @@ PASSWORD = os.getenv("OXFORD_PASS")
 def scrape_admin_table(path, min_columns):
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(
+    headless=True,
+    args=["--no-sandbox", "--disable-dev-shm-usage"]
+)
+
             context = browser.new_context()
             page = context.new_page()
 
