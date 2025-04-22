@@ -109,7 +109,7 @@ async def whatsapp_webhook(request: Request):
 # ─────────────────────────────────────────────
 def log_to_sheet(sender, message, msg_type="unknown", context=""):
     try:
-        credentials_path = os.getenv("GOOGLE_SHEETS_JSON")
+        credentials_path = "/etc/secrets/gcreds.json"
         scopes = ["https://www.googleapis.com/auth/spreadsheets"]
         creds = Credentials.from_service_account_file(credentials_path, scopes=scopes)
         client = gspread.authorize(creds)
