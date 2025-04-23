@@ -6,6 +6,7 @@
     from fastapi.responses import PlainTextResponse
     from datetime import datetime
     from dotenv import load_dotenv
+    import gspread
     
     from scraper import (
     scrape_flights_playwright,
