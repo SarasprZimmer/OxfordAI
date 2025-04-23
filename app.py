@@ -19,6 +19,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 user_context = {}
+processed_messages = set()
 asyncio.get_event_loop().set_debug(False)
 
 # ─────── CONTEXT LOGIC ───────
@@ -74,8 +75,17 @@ async def whatsapp_webhook(request: Request):
     print("✅ Webhook hit!")
     print("📩 Incoming:", data)
 
-    incoming_msg = data.get("data", {}).get("body", "")
-    sender = data.get("data", {}).get("from", "")
+  incoming_msg = data.get("data", {}).get("body", "")
+sender = data.get("data", {}).get("from", "")
+msg_id = data.get("data", {}).get("id", "")
+
+if msg_id in processed_messages:
+    print("⚠️ Duplicate message ignored.")
+    return PlainTextResponse("Duplicate message", status_code=200)
+
+processed_messages.add(msg_id)
+
+
 
     if not incoming_msg or not sender:
         return PlainTextResponse("No valid message", status_code=200)
