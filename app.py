@@ -6,8 +6,6 @@ from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from datetime import datetime
 from dotenv import load_dotenv
-import gspread
-from google.oauth2.service_account import Credentials
 
 from scraper import (
     scrape_flights_playwright,
@@ -49,25 +47,6 @@ def resolve_context(user_id, new_input):
     return new_input
 
 # ─────── LOGGING ───────
-def log_to_sheet(sender, message, msg_type="unknown", context=""):
-    try:
-        credentials_path = "/etc/secrets/gcreds.json"
-        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-        creds = Credentials.from_service_account_file(credentials_path, scopes=scopes)
-        client = gspread.authorize(creds)
-        sheet = client.open("OxfordAI Logs")
-        try:
-            worksheet = sheet.worksheet("Logs")
-        except gspread.exceptions.WorksheetNotFound:
-            worksheet = sheet.add_worksheet(title="Logs", rows="1000", cols="5")
-            worksheet.append_row(["Timestamp", "Client Number", "Message", "Detected Type", "Context"])
-
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        worksheet.append_row([timestamp, sender, message, msg_type, context])
-        print("✅ Logged to Google Sheets")
-    except Exception as e:
-        print("❌ Logging error:", e)
-
 # ─────── NOTIFY AGENT ───────
 def notify_human_agent(user_number, request_summary):
     try:
@@ -129,11 +108,7 @@ async def whatsapp_webhook(request: Request):
     except Exception as e:
         print("🚨 Failed to send message:", e)
 
-    # Log to Google Sheets
-    try:
-        log_to_sheet(sender, incoming_msg, context=reply)
-    except Exception as e:
-        print("❌ Failed to log:", e)
+
 
     return PlainTextResponse("OK", status_code=200)
 
